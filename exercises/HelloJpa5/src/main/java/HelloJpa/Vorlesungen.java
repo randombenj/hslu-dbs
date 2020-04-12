@@ -28,16 +28,21 @@ import javax.persistence.Table;
     @NamedQuery(name = "Vorlesungen.findAll", query = "SELECT v FROM Vorlesungen v")})
 public class Vorlesungen implements Serializable {
     private static final long serialVersionUID = 1L;
+
     @Id
     @Basic(optional = false)
     @Column(name = "VorlNr")
     private Integer vorlNr;
+
     @Column(name = "Titel")
     private String titel;
+
     @Column(name = "SWS")
     private Integer sws;
+
     @ManyToMany(mappedBy = "vorlesungenCollection")
     private Collection<Studenten> studentenCollection;
+
     @JoinColumn(name = "gelesenVon", referencedColumnName = "PersNr")
     @ManyToOne
     private Professoren gelesenVon;
@@ -113,5 +118,5 @@ public class Vorlesungen implements Serializable {
     public String toString() {
         return "javaapplication4.Vorlesungen[ vorlNr=" + vorlNr + " ]";
     }
-    
+
 }
