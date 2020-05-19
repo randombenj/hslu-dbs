@@ -8,11 +8,14 @@ import praw
 import pymongo
 
 import json
-
+import elevation
 
 DATA_PATH = Path(__file__).resolve().parent / "data"
 
+
 def insert_data():
+    loader = elevation.ElevationLoader()
+
     db = pymongo.MongoClient("mongodb://localhost").dbs
 
     raw_data = json.loads((DATA_PATH / "accidents.json").read_text())
@@ -20,6 +23,9 @@ def insert_data():
     processed_count = 0
 
     for raw_accident in raw_data["features"]:
+        raw_coords = raw_accident["geometry"]["coordinates"]
+        height = loader.getHeight(raw_coords[0], raw_coords[1])
+        cords = {"x": raw_coords[0], "y": raw_coords[1], "z": height}
         db.accidents.insert({
             "involving_pedestrian": raw_accident["properties"]["AccidentInvolvingPedestrian"].lower() == "true",
             "involving_motorcycle": raw_accident["properties"]["AccidentInvolvingBicycle"].lower() == "true",
@@ -30,7 +36,7 @@ def insert_data():
             },
             "location": {
                 "canton": raw_accident["properties"]["CantonCode"],
-                "coordinates": raw_accident["geometry"]["coordinates"]
+                "coordinates": cords
             },
             "severity": {
                 "id": raw_accident["properties"]["AccidentSeverityCategory"],
