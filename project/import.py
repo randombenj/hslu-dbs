@@ -3,6 +3,7 @@ import uuid
 import time
 from datetime import datetime
 from pathlib import Path
+import argparse
 
 import praw
 import pymongo
@@ -13,10 +14,10 @@ import elevation
 DATA_PATH = Path(__file__).resolve().parent / "data"
 
 
-def insert_data():
+def insert_data(client):
     loader = elevation.ElevationLoader()
 
-    db = pymongo.MongoClient("mongodb://localhost").dbs
+    db = client.dbs
 
     raw_data = json.loads((DATA_PATH / "accidents.json").read_text())
     data_count = len(raw_data["features"])
@@ -25,7 +26,7 @@ def insert_data():
     for raw_accident in raw_data["features"]:
         raw_coords = raw_accident["geometry"]["coordinates"]
         height = loader.get_height(raw_coords[0], raw_coords[1])
-        cords = {"x": raw_coords[0], "y": raw_coords[1], "z": height}
+        cords = [raw_coords[0], raw_coords[1], height]
         db.accidents.insert({
             "involving_pedestrian": raw_accident["properties"]["AccidentInvolvingPedestrian"].lower() == "true",
             "involving_motorcycle": raw_accident["properties"]["AccidentInvolvingBicycle"].lower() == "true",
@@ -59,4 +60,13 @@ def insert_data():
 
 
 if __name__ == "__main__":
-    insert_data()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--drop-db", help="Drop all existing data before inserting new data", action="store_true")
+    args = parser.parse_args()
+
+    client = pymongo.MongoClient("mongodb://localhost")
+
+    if args.drop_db:
+        client.drop_database('dbs')
+
+    insert_data(client)
