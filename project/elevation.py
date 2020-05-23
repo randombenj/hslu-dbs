@@ -22,7 +22,7 @@ class ElevationLoader:
                 data[x][y] = z
         return data
 
-    def getHeight(self, x, y):
+    def get_height(self, x, y):
         x_dict = self.data.get(x, self.data[min(self.data.keys(), key=lambda k: abs(k-x))])
         return x_dict.get(y, x_dict[min(x_dict.keys(), key=lambda k: abs(k-y))])
 

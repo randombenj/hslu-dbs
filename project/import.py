@@ -24,7 +24,7 @@ def insert_data():
 
     for raw_accident in raw_data["features"]:
         raw_coords = raw_accident["geometry"]["coordinates"]
-        height = loader.getHeight(raw_coords[0], raw_coords[1])
+        height = loader.get_height(raw_coords[0], raw_coords[1])
         cords = {"x": raw_coords[0], "y": raw_coords[1], "z": height}
         db.accidents.insert({
             "involving_pedestrian": raw_accident["properties"]["AccidentInvolvingPedestrian"].lower() == "true",
