@@ -19,5 +19,5 @@ Simply run `python import.py` in the set up environment.
 To present the slides directly in jupyter run:
 
 ```
-jupyter nbconvert data-mining.ipynb --to slides --no-prompt --TagRemovePreprocessor.remove_input_tags={\"to_remove\"} --post serve
+jupyter nbconvert presentation.ipynb --to slides --no-prompt --TagRemovePreprocessor.remove_input_tags={\"hide\"} --post serve
 ```
