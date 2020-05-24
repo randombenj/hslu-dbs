@@ -3,3 +3,4 @@
 .env
 accidents.json
 *.slides.html
+__pycache__/
